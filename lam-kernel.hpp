@@ -1,17 +1,17 @@
+#pragma once
+
 #include "som-module.hpp"
 
-class WEBREPORT {
+class RESULT_COLLECTOR {
 
     public:
 
-        WEBREPORT();
-        ~WEBREPORT();
+        RESULT_COLLECTOR();
+        ~RESULT_COLLECTOR();
 
         void Add_New_Result(std::string name);
         void Add_Raw_Result(int neuron_id);
         void Add_Cor_Value(double current_value);
-
-        void Create_Report(std::string file_name);
 
         // As these vectors are being pushed at different time, but they should be the same in size,
         // so to prevent any inconsistency, add a synchronize check function here
@@ -204,5 +204,5 @@ class LAMSTARNN {
         // enabled to stop punish if target neuron is odd or even as current output neuron
         int grouping_punishment_void_enabled;
 
-        WEBREPORT *web_repo;
+        RESULT_COLLECTOR *res_collector;
 };

@@ -1,9 +1,9 @@
 #include "lam-kernel.hpp"
 
-WEBREPORT::WEBREPORT() {}
-WEBREPORT::~WEBREPORT() {}
+RESULT_COLLECTOR::RESULT_COLLECTOR() {}
+RESULT_COLLECTOR::~RESULT_COLLECTOR() {}
 
-int WEBREPORT::Synchronize_Check() {
+int RESULT_COLLECTOR::Synchronize_Check() {
    if(result_name.size()!=raw_results.size()||raw_results.size()!=cor_value.size()) {
        std::cout<<std::endl<<"Warning: Web report not synchronized"<<std::endl;
        return 0;
@@ -11,7 +11,7 @@ int WEBREPORT::Synchronize_Check() {
    return 1;
 }
 
-void WEBREPORT::Add_New_Result(std::string name) {
+void RESULT_COLLECTOR::Add_New_Result(std::string name) {
     Synchronize_Check();
     result_name.push_back(name);
     raw_results.push_back(std::vector<int>(0));
@@ -19,20 +19,13 @@ void WEBREPORT::Add_New_Result(std::string name) {
     return;
 }
 
-void WEBREPORT::Add_Raw_Result(int neuron_id) {
+void RESULT_COLLECTOR::Add_Raw_Result(int neuron_id) {
     raw_results[raw_results.size()-1].push_back(neuron_id);
     return;
 }
 
-void WEBREPORT::Add_Cor_Value(double current_value) {
+void RESULT_COLLECTOR::Add_Cor_Value(double current_value) {
     cor_value[raw_results.size()-1].push_back(current_value);
-    return;
-}
-
-void WEBREPORT::Create_Report(std::string file_name) {
-    std::ofstream html_file(file_name);
-    html_file<<__report__header;
-    html_file<<__report__end;
     return;
 }
 
@@ -243,7 +236,7 @@ LAMSTARNN::LAMSTARNN(struct LAMSTARNNCONF lamconf)
     , grouping_punishment_void_enabled (1)
     , enable_multithread (1) 
     , maximum_threads (8) {
-    web_repo = new WEBREPORT();
+    res_collector = new RESULT_COLLECTOR();
     link_weights = new LWSVR(lamconf);
     som_modules = new SOMLAYER*[num_of_SOM_module];
     som_res = new SOMRESULT*[num_of_SOM_module];
@@ -276,7 +269,7 @@ LAMSTARNN::LAMSTARNN(std::string read_name) {
     (*read_file)>>grouping_punishment_void_enabled;
     (*read_file)>>maximum_threads;
     enable_multithread = 1;
-    web_repo = new WEBREPORT();
+    res_collector = new RESULT_COLLECTOR();
     som_modules = new SOMLAYER*[num_of_SOM_module];
     som_res = new SOMRESULT*[num_of_SOM_module];
     for(int i=0;i<num_of_SOM_module;i++) {
@@ -368,7 +361,7 @@ void LAMSTARNN::Batch_Feed_SOM_With_Stride(int stride, int subwords_length, int 
 
         cur+=stride;
     }
-    std::cout.clear()
+    std::cout.clear();
 
     if(cur+som_modules[end_module]->number_of_input_values-stride!=subwords_length) {
         std::cout<<"Warning: Feeding completed, yet extra data left"<<std::endl;
@@ -397,7 +390,7 @@ void LAMSTARNN::Generate_Result(int force_proceed, std::string result_name) {
         }
     }
 
-    web_repo->Add_New_Result(result_name);
+    res_collector->Add_New_Result(result_name);
 
     Record_SOM_Results_And_Weights_Postprocessing();
 
@@ -502,8 +495,8 @@ void LAMSTARNN::Determine_Winner_Modulewise(int output_module_id) {
         }
 
         std::cout<<"    neuron "<<i<<"'s value: "<<current_value<<std::endl;
-        web_repo->Add_Raw_Result(i);
-        web_repo->Add_Cor_Value(current_value);
+        res_collector->Add_Raw_Result(i);
+        res_collector->Add_Cor_Value(current_value);
 
         if(current_value>current_max_value) {
             current_max_value = current_value;
@@ -608,7 +601,7 @@ void LAMSTARNN::Batch_Train(int *correct_neurons, int start_module, int end_modu
 }
 
 void LAMSTARNN::Create_Report(std::string file_name) {
-    web_repo->Create_Report(file_name);
+    std::cout<<"Not complete implemented"<<std::endl;
 }
 
 void LAMSTARNN::Enable_Biased_Sensitivity() {

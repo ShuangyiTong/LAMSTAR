@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <iostream>
 #include <chrono>
@@ -8,7 +10,6 @@
 #include <algorithm>
 #include <cfloat>
 #include <thread>
-#include "const-string.hpp"
 
 double my_rand();
 

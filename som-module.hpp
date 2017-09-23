@@ -1,3 +1,5 @@
+#pragma once
+
 #include "algo.hpp"
 
 class SOMLAYER {
